@@ -1,0 +1,254 @@
+<!-- portfolio/templates/portfolio/modifier_profil.html -->
+{% extends 'portfolio/base.html' %}
+
+{% block title %}Gérer mon profil - Portfolio{% endblock %}
+
+{% block content %}
+<div class="admin-panel">
+    <h2 class="text-center mb-4">
+        <i class="bi bi-gear-fill"></i> Gestion de mon portfolio
+    </h2>
+
+    <!-- Modification des informations personnelles -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="bi bi-person-fill"></i> Informations personnelles</h5>
+        </div>
+        <div class="card-body">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        {{ form.nom.label_tag }}
+                        {{ form.nom }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form.prenom.label_tag }}
+                        {{ form.prenom }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form.pays.label_tag }}
+                        {{ form.pays }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form.telephone.label_tag }}
+                        {{ form.telephone }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form.email.label_tag }}
+                        {{ form.email }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form.linkedin.label_tag }}
+                        {{ form.linkedin }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form.github.label_tag }}
+                        {{ form.github }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form.photo.label_tag }}
+                        {{ form.photo }}
+                        {% if profil.photo %}
+                            <div class="mt-2">
+                                <img src="{{ profil.photo.url }}" alt="Photo de profil" style="width: 100px; height: 100px; object-fit: cover; border-radius: 50%;">
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-12 mb-3">
+                        {{ form.objectif.label_tag }}
+                        {{ form.objectif }}
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save"></i> Enregistrer les modifications
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Gestion des formations -->
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="bi bi-mortarboard-fill"></i> Formations</h5>
+            <a href="{% url 'portfolio:ajouter_formation' %}" class="btn btn-sm btn-success">
+                <i class="bi bi-plus-circle"></i> Ajouter
+            </a>
+        </div>
+        <div class="card-body">
+            {% if profil.formations.all %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Titre</th>
+                                <th>Établissement</th>
+                                <th>Période</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for formation in profil.formations.all %}
+                                <tr>
+                                    <td>{{ formation.titre }}</td>
+                                    <td>{{ formation.etablissement }}</td>
+                                    <td>{{ formation.periode }}</td>
+                                    <td class="table-actions">
+                                        <a href="{% url 'portfolio:modifier_formation' formation.pk %}" class="btn btn-sm btn-warning">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a href="{% url 'portfolio:supprimer_formation' formation.pk %}" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette formation ?');">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-muted">Aucune formation enregistrée.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Gestion des expériences -->
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="bi bi-briefcase-fill"></i> Expériences professionnelles</h5>
+            <a href="{% url 'portfolio:ajouter_experience' %}" class="btn btn-sm btn-success">
+                <i class="bi bi-plus-circle"></i> Ajouter
+            </a>
+        </div>
+        <div class="card-body">
+            {% if profil.experiences.all %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Poste</th>
+                                <th>Entreprise</th>
+                                <th>Période</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for experience in profil.experiences.all %}
+                                <tr>
+                                    <td>{{ experience.poste }}</td>
+                                    <td>{{ experience.entreprise }}</td>
+                                    <td>{{ experience.periode }}</td>
+                                    <td class="table-actions">
+                                        <a href="{% url 'portfolio:modifier_experience' experience.pk %}" class="btn btn-sm btn-warning">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a href="{% url 'portfolio:supprimer_experience' experience.pk %}" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette expérience ?');">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-muted">Aucune expérience enregistrée.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Gestion des compétences -->
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="bi bi-tools"></i> Compétences</h5>
+            <a href="{% url 'portfolio:ajouter_competence' %}" class="btn btn-sm btn-success">
+                <i class="bi bi-plus-circle"></i> Ajouter
+            </a>
+        </div>
+        <div class="card-body">
+            {% if profil.competences.all %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Compétence</th>
+                                <th>Catégorie</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for competence in profil.competences.all %}
+                                <tr>
+                                    <td>{{ competence.nom }}</td>
+                                    <td>{{ competence.categorie|default:"—" }}</td>
+                                    <td class="table-actions">
+                                        <a href="{% url 'portfolio:modifier_competence' competence.pk %}" class="btn btn-sm btn-warning">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a href="{% url 'portfolio:supprimer_competence' competence.pk %}" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette compétence ?');">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-muted">Aucune compétence enregistrée.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Gestion des projets -->
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0"><i class="bi bi-folder-fill"></i> Projets</h5>
+            <a href="{% url 'portfolio:ajouter_projet' %}" class="btn btn-sm btn-success">
+                <i class="bi bi-plus-circle"></i> Ajouter
+            </a>
+        </div>
+        <div class="card-body">
+            {% if profil.projets.all %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Titre</th>
+                                <th>Langages</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for projet in profil.projets.all %}
+                                <tr>
+                                    <td>{{ projet.titre }}</td>
+                                    <td>{{ projet.langages|default:"—" }}</td>
+                                    <td>{{ projet.description|truncatechars:80|default:"—" }}</td>
+                                    <td class="table-actions">
+                                        <a href="{% url 'portfolio:modifier_projet' projet.pk %}" class="btn btn-sm btn-warning">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a href="{% url 'portfolio:supprimer_projet' projet.pk %}" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce projet ?');">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-muted">Aucun projet enregistré.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="text-center">
+        <a href="{% url 'portfolio:accueil' %}" class="btn btn-secondary">
+            <i class="bi bi-eye"></i> Voir le portfolio public
+        </a>
+    </div>
+</div>
+{% endblock %}

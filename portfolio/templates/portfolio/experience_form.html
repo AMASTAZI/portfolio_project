@@ -1,0 +1,84 @@
+<!-- portfolio/templates/portfolio/experience_form.html -->
+{% extends 'portfolio/base.html' %}
+
+{% block title %}{{ action }} une expérience - Portfolio{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0"><i class="bi bi-briefcase-fill"></i> {{ action }} une expérience</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        {{ form.poste.label_tag }}
+                        {{ form.poste }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.entreprise.label_tag }}
+                        {{ form.entreprise }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.periode.label_tag }}
+                        {{ form.periode }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.description.label_tag }}
+                        {{ form.description }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.ordre.label_tag }}
+                        {{ form.ordre }}
+                        <small class="form-text text-muted">Plus le nombre est élevé, plus l'expérience apparaît en haut.</small>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary me-auto">
+                            <i class="bi bi-save-fill"></i> Enregistrer
+                        </button>
+                        <a href="{% url 'portfolio:modifier_profil' %}" class="btn btn-secondary">
+                            <i class="bi bi-x-circle-fill"></i> Annuler et revenir au profil
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Liste des expériences -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h4 class="mb-0"><i class="bi bi-briefcase-fill"></i> Expériences</h4>
+            </div>
+            <div class="card-body">
+                {% if experiences %}
+                    <ul class="list-group">
+                        {% for experience in experiences %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="mb-1">{{ experience.poste }}</h5>
+                                    <small class="text-muted">{{ experience.entreprise }} | {{ experience.periode }}</small>
+                                </div>
+                                <div class="table-actions">
+                                    <a href="{% url 'portfolio:modifier_experience' experience.pk %}" class="btn btn-sm btn-warning me-2">
+                                        <i class="bi bi-pencil-fill"></i> Modifier
+                                    </a>
+                                    <a href="{% url 'portfolio:supprimer_experience' experience.pk %}" class="btn btn-sm btn-danger">
+                                        <i class="bi bi-trash-fill"></i> Supprimer
+                                    </a>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted">Aucune expérience ajoutée pour le moment.</p>
+                {% endif %}
+                <a href="{% url 'portfolio:ajouter_experience' %}" class="btn btn-primary mt-3">
+                    <i class="bi bi-plus-circle-fill"></i> Ajouter une nouvelle expérience
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

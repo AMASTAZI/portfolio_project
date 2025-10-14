@@ -1,0 +1,152 @@
+<!-- portfolio/templates/portfolio/accueil.html -->
+{% extends 'portfolio/base.html' %}
+
+{% block title %}Portfolio - Kevin Djeuga{% endblock %}
+
+{% block content %}
+{% if profil %}
+    <!-- En-tête du profil -->
+    <div class="text-center mb-5">
+        {% if profil.photo %}
+            <img src="{{ profil.photo.url }}" alt="{{ profil.prenom }} {{ profil.nom }}" class="profile-photo mb-3">
+        {% else %}
+            <div class="profile-photo mb-3 d-inline-flex align-items-center justify-content-center bg-secondary text-white" style="font-size: 4rem;">
+                <i class="bi bi-person-circle"></i>
+            </div>
+        {% endif %}
+        <h1 class="display-4 fw-bold">{{ profil.prenom }} {{ profil.nom }}</h1>
+        <p class="lead text-muted">{{ profil.pays }}</p>
+    </div>
+
+    <!-- Informations de contact -->
+    <div class="row mb-5">
+        <div class="col-md-8 mx-auto">
+            <div class="contact-info">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <i class="bi bi-telephone-fill"></i>
+                        <strong>Téléphone:</strong> {{ profil.telephone }}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <i class="bi bi-envelope-fill"></i>
+                        <strong>Email:</strong> <a href="mailto:{{ profil.email }}">{{ profil.email }}</a>
+                    </div>
+                    {% if profil.linkedin %}
+                    <div class="col-md-6 mb-3">
+                        <i class="bi bi-linkedin"></i>
+                        <strong>LinkedIn:</strong> <a href="https://{{ profil.linkedin }}" target="_blank">{{ profil.linkedin }}</a>
+                    </div>
+                    {% endif %}
+                    {% if profil.github %}
+                    <div class="col-md-6 mb-3">
+                        <i class="bi bi-github"></i>
+                        <strong>GitHub:</strong> <a href="{{ profil.github }}" target="_blank">{{ profil.github }}</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Objectif -->
+    <div class="mb-5">
+        <h2 class="section-title">Objectif professionnel</h2>
+        <div class="card">
+            <div class="card-body">
+                <p class="lead">{{ profil.objectif }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formations -->
+    {% if profil.formations.all %}
+    <div class="mb-5">
+        <h2 class="section-title">Formation</h2>
+        {% for formation in profil.formations.all %}
+            <div class="timeline-item">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary">{{ formation.titre }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">
+                            <i class="bi bi-building"></i> {{ formation.etablissement }}
+                        </h6>
+                        <p class="text-muted mb-2">
+                            <i class="bi bi-calendar3"></i> {{ formation.periode }}
+                        </p>
+                        {% if formation.description %}
+                            <p class="card-text">{{ formation.description }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Expériences -->
+    {% if profil.experiences.all %}
+    <div class="mb-5">
+        <h2 class="section-title">Expériences professionnelles</h2>
+        {% for experience in profil.experiences.all %}
+            <div class="timeline-item">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary">{{ experience.poste }}</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">
+                            <i class="bi bi-briefcase"></i> {{ experience.entreprise }}
+                        </h6>
+                        <p class="text-muted mb-2">
+                            <i class="bi bi-calendar3"></i> {{ experience.periode }}
+                        </p>
+                        <p class="card-text">{{ experience.description }}</p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Compétences -->
+    {% if profil.competences.all %}
+    <div class="mb-5">
+        <h2 class="section-title">Compétences</h2>
+        <div class="card">
+            <div class="card-body">
+                {% for competence in profil.competences.all %}
+                    <span class="badge-custom">{{ competence.nom }}</span>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Activités -->
+    {% if profil.activites.all %}
+    <div class="mb-5">
+        <h2 class="section-title">Centres d'intérêt</h2>
+        <div class="card">
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    {% for activite in profil.activites.all %}
+                        <li class="mb-2">
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <strong>{{ activite.nom }}</strong>
+                            {% if activite.description %}: {{ activite.description }}{% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+{% else %}
+    <div class="text-center">
+        <div class="alert alert-info">
+            <h4>Aucun profil disponible pour le moment.</h4>
+            <p>Veuillez vous connecter pour créer votre profil.</p>
+            <a href="{% url 'portfolio:connexion' %}" class="btn btn-primary">Se connecter</a>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}

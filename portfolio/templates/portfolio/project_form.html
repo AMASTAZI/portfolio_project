@@ -1,0 +1,51 @@
+<!-- portfolio/templates/portfolio/project_form.html -->
+{% extends 'portfolio/base.html' %}
+
+{% block title %}{{ action }} un projet - Portfolio{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0"><i class="bi bi-folder-fill"></i> {{ action }} un projet</h4>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        {{ form.titre.label_tag }}
+                        {{ form.titre }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.description.label_tag }}
+                        {{ form.description }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.image.label_tag }}
+                        {{ form.image }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.langages.label_tag }}
+                        {{ form.langages }}
+                        <small class="form-text text-muted">Séparez les langages par des virgules.</small>
+                    </div>
+                    <div class="mb-3">
+                        {{ form.ordre.label_tag }}
+                        {{ form.ordre }}
+                        <small class="form-text text-muted">Plus le nombre est élevé, plus le projet apparaît en haut.</small>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary me-auto">
+                            <i class="bi bi-save-fill"></i> Enregistrer
+                        </button>
+                        <a href="{% url 'portfolio:modifier_profil' %}" class="btn btn-secondary">
+                            <i class="bi bi-x-circle-fill"></i> Annuler
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
