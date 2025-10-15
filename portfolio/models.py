@@ -76,6 +76,7 @@ class Projet(models.Model):
     image = models.ImageField(upload_to='img/', blank=True, null=True)
     langages = models.CharField(max_length=200, blank=True, help_text='Liste de langages séparés par des virgules')
     ordre = models.IntegerField(default=0)
+    lien = models.URLField(blank=True, help_text='Lien vers le projet (ex: démo ou repo)')
 
     def __str__(self):
         return self.titre

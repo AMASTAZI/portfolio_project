@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Profil, Formation, Experience, Competence, Activite
+from .models import Profil, Formation, Experience, Competence, Activite, Projet
 from .forms import ProfilForm, FormationForm, ExperienceForm, CompetenceForm, ActiviteForm,ProjetForm
 
 

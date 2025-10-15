@@ -90,9 +90,10 @@ class ActiviteForm(forms.ModelForm):
 class ProjetForm(forms.ModelForm):
     class Meta:
         model = Projet
-        fields = ['titre', 'description', 'image', 'langages', 'ordre']
+        fields = ['titre', 'description', 'image', 'langages', 'ordre', 'lien']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4}),
             'langages': forms.TextInput(attrs={'placeholder': 'ex: Python, Django, JavaScript'}),
+            'lien': forms.URLInput(attrs={'placeholder': 'https://... (optionnel)'}),
             'ordre': forms.NumberInput(attrs={'min': 0}),
         }
