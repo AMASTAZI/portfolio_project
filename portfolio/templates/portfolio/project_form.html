@@ -1,46 +1,145 @@
-<!-- portfolio/templates/portfolio/project_form.html -->
+<!-- project_form.html -->
 {% extends 'portfolio/base.html' %}
 
 {% block title %}{{ action }} un projet - Portfolio{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-8">
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/project_form.css' %}">
+
+<div class="row justify-content-center project-card-form">
+    <div class="col-md-10">
         <div class="card">
             <div class="card-header">
                 <h4 class="mb-0"><i class="bi bi-folder-fill"></i> {{ action }} un projet</h4>
             </div>
             <div class="card-body">
-                <form method="post" enctype="multipart/form-data">
+                <form method="post" enctype="multipart/form-data" id="project-form">
                     {% csrf_token %}
+                    
                     <div class="mb-3">
                         {{ form.titre.label_tag }}
                         {{ form.titre }}
+                        {% if form.titre.errors %}
+                            <div class="text-danger small">{{ form.titre.errors }}</div>
+                        {% endif %}
                     </div>
+                    
                     <div class="mb-3">
                         {{ form.description.label_tag }}
                         {{ form.description }}
+                        {% if form.description.errors %}
+                            <div class="text-danger small">{{ form.description.errors }}</div>
+                        {% endif %}
                     </div>
+                    
                     <div class="mb-3">
-                        {{ form.image.label_tag }}
-                        {{ form.image }}
+                        {{ form.image_principale.label_tag }}
+                        {{ form.image_principale }}
+                        <small class="form-text text-muted">Image principale (apparaît dans la liste publique).</small>
+                        {% if form.image_principale.errors %}
+                            <div class="text-danger small">{{ form.image_principale.errors }}</div>
+                        {% endif %}
                     </div>
+                    
                     <div class="mb-3">
                         {{ form.langages.label_tag }}
                         {{ form.langages }}
-                        <small class="form-text text-muted">Séparez les langages par des virgules.</small>
+                        {% if form.langages.errors %}
+                            <div class="text-danger small">{{ form.langages.errors }}</div>
+                        {% endif %}
                     </div>
+                    
                     <div class="mb-3">
                         {{ form.lien.label_tag }}
                         {{ form.lien }}
-                        <small class="form-text text-muted">Lien vers le projet (démo ou repository) — optionnel.</small>
+                        {% if form.lien.errors %}
+                            <div class="text-danger small">{{ form.lien.errors }}</div>
+                        {% endif %}
                     </div>
+                    
                     <div class="mb-3">
                         {{ form.ordre.label_tag }}
                         {{ form.ordre }}
-                        <small class="form-text text-muted">Plus le nombre est élevé, plus le projet apparaît en haut.</small>
+                        {% if form.ordre.errors %}
+                            <div class="text-danger small">{{ form.ordre.errors }}</div>
+                        {% endif %}
                     </div>
-                    <div class="d-flex gap-2">
+                    
+                    <hr>
+                    <h5><i class="bi bi-images"></i> Images du projet (galerie)</h5>
+                    <p class="text-muted small">Ajoutez plusieurs images avec leurs descriptions. Elles seront affichées dans le modal quand on clique sur le projet.</p>
+                    
+                    {{ formset.management_form }}
+                    
+                    <div id="images-forms" class="mb-3">
+                        {% for imgform in formset %}
+                            <div class="card mb-3 p-3 image-form-row" data-form-index="{{ forloop.counter0 }}">
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label fw-bold">Aperçu</label>
+                                        <div class="image-preview mb-2 border rounded d-flex align-items-center justify-content-center" style="height: 150px; background-color: #f8f9fa;">
+                                            {% if imgform.instance.pk and imgform.instance.image %}
+                                                <img src="{{ imgform.instance.image.url }}" alt="preview" style="max-height: 100%; max-width: 100%; object-fit: contain;">
+                                            {% else %}
+                                                <i class="bi bi-image" style="font-size:3rem;color:#9aa0a6;"></i>
+                                            {% endif %}
+                                        </div>
+                                        {{ imgform.image.label_tag }}
+                                        {{ imgform.image }}
+                                        {% if imgform.image.errors %}
+                                            <div class="text-danger small">{{ imgform.image.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        {{ imgform.description.label_tag }}
+                                        {{ imgform.description }}
+                                        {% if imgform.description.errors %}
+                                            <div class="text-danger small">{{ imgform.description.errors }}</div>
+                                        {% endif %}
+                                        
+                                        <div class="mt-3">
+                                            {{ imgform.ordre.label_tag }}
+                                            {{ imgform.ordre }}
+                                            {% if imgform.ordre.errors %}
+                                                <div class="text-danger small">{{ imgform.ordre.errors }}</div>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        <div class="form-check mt-3">
+                                            {{ imgform.is_principale }}
+                                            <label class="form-check-label" for="{{ imgform.is_principale.id_for_label }}">
+                                                Utiliser comme image principale du projet
+                                            </label>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-2 d-flex align-items-start justify-content-end">
+                                        {% if imgform.instance.pk %}
+                                            <button type="button" class="btn btn-sm btn-outline-danger js-mark-delete">
+                                                <i class="bi bi-trash"></i> Supprimer
+                                            </button>
+                                            {{ imgform.DELETE }}
+                                            {{ imgform.id }}
+                                        {% else %}
+                                            <button type="button" class="btn btn-sm btn-outline-danger js-remove-new">
+                                                <i class="bi bi-x-circle"></i> Retirer
+                                            </button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    
+                    <button type="button" id="add-image" class="btn btn-sm btn-outline-primary mb-4">
+                        <i class="bi bi-plus-circle"></i> Ajouter une image
+                    </button>
+                    
+                    <hr>
+                    
+                    <div class="d-flex gap-2 form-actions">
                         <button type="submit" class="btn btn-primary me-auto">
                             <i class="bi bi-save-fill"></i> Enregistrer
                         </button>
@@ -53,4 +152,165 @@
         </div>
     </div>
 </div>
+
+<script>
+(function() {
+    'use strict';
+    
+    const prefix = '{{ formset.prefix }}';
+    const totalFormsInput = document.querySelector(`input[name="${prefix}-TOTAL_FORMS"]`);
+    const maxFormsInput = document.querySelector(`input[name="${prefix}-MAX_NUM_FORMS"]`);
+    const imagesContainer = document.getElementById('images-forms');
+    const addButton = document.getElementById('add-image');
+    
+    // Template pour les nouvelles lignes
+    const emptyFormTemplate = `{{ formset.empty_form|safe }}`.replace(/__prefix__/g, '%%INDEX%%');
+    
+    // Fonction pour créer une nouvelle ligne
+    function addNewForm() {
+        const currentTotal = parseInt(totalFormsInput.value, 10);
+        const maxForms = maxFormsInput ? parseInt(maxFormsInput.value || 1000, 10) : 1000;
+        
+        if (currentTotal >= maxForms) {
+            alert('Nombre maximum de formulaires atteint.');
+            return;
+        }
+        
+        // Créer le wrapper
+        const wrapper = document.createElement('div');
+        wrapper.className = 'card mb-3 p-3 image-form-row';
+        wrapper.dataset.formIndex = currentTotal;
+        
+        // Remplacer __prefix__ par l'index actuel
+        const formHtml = emptyFormTemplate.replace(/%%INDEX%%/g, currentTotal);
+        
+        // Structure HTML
+        wrapper.innerHTML = `
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label fw-bold">Aperçu</label>
+                    <div class="image-preview mb-2 border rounded d-flex align-items-center justify-content-center" style="height: 150px; background-color: #f8f9fa;">
+                        <i class="bi bi-image" style="font-size:3rem;color:#9aa0a6;"></i>
+                    </div>
+                    <label for="id_${prefix}-${currentTotal}-image">Image:</label>
+                    <input type="file" name="${prefix}-${currentTotal}-image" class="form-control" accept="image/*" id="id_${prefix}-${currentTotal}-image">
+                </div>
+                <div class="col-md-6">
+                    <label for="id_${prefix}-${currentTotal}-description">Description de l'image:</label>
+                    <textarea name="${prefix}-${currentTotal}-description" cols="40" rows="2" class="form-control" placeholder="Description de cette image..." id="id_${prefix}-${currentTotal}-description"></textarea>
+                    
+                    <div class="mt-3">
+                        <label for="id_${prefix}-${currentTotal}-ordre">Ordre:</label>
+                        <input type="number" name="${prefix}-${currentTotal}-ordre" value="0" min="0" class="form-control" id="id_${prefix}-${currentTotal}-ordre">
+                    </div>
+                    
+                    <div class="form-check mt-3">
+                        <input type="checkbox" name="${prefix}-${currentTotal}-is_principale" class="form-check-input" id="id_${prefix}-${currentTotal}-is_principale">
+                        <label class="form-check-label" for="id_${prefix}-${currentTotal}-is_principale">
+                            Utiliser comme image principale du projet
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-2 d-flex align-items-start justify-content-end">
+                    <button type="button" class="btn btn-sm btn-outline-danger js-remove-new">
+                        <i class="bi bi-x-circle"></i> Retirer
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        // Ajouter au conteneur
+        imagesContainer.appendChild(wrapper);
+        
+        // Mettre à jour le compteur
+        totalFormsInput.value = currentTotal + 1;
+        
+        // Bind les événements
+        bindFormEvents(wrapper);
+    }
+    
+    // Fonction pour lier les événements à une ligne de formulaire
+    function bindFormEvents(formRow) {
+        const fileInput = formRow.querySelector('input[type="file"]');
+        const preview = formRow.querySelector('.image-preview');
+        const removeBtn = formRow.querySelector('.js-remove-new');
+        const deleteBtn = formRow.querySelector('.js-mark-delete');
+        const principaleCheckbox = formRow.querySelector('input[type="checkbox"][name$="-is_principale"]');
+        
+        // Prévisualisation d'image
+        if (fileInput && preview) {
+            fileInput.addEventListener('change', function() {
+                const file = this.files && this.files[0];
+                if (!file) {
+                    preview.innerHTML = '<i class="bi bi-image" style="font-size:3rem;color:#9aa0a6;"></i>';
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    preview.innerHTML = `<img src="${e.target.result}" alt="preview" style="max-height: 100%; max-width: 100%; object-fit: contain;">`;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+        
+        // Bouton retirer (nouvelle ligne)
+        if (removeBtn) {
+            removeBtn.addEventListener('click', function() {
+                formRow.remove();
+                updateFormIndexes();
+            });
+        }
+        
+        // Bouton supprimer (ligne existante)
+        if (deleteBtn) {
+            deleteBtn.addEventListener('click', function() {
+                const deleteInput = formRow.querySelector('input[name$="-DELETE"]');
+                if (deleteInput) {
+                    if (deleteInput.type === 'checkbox') {
+                        deleteInput.checked = true;
+                    } else {
+                        deleteInput.value = 'on';
+                    }
+                    formRow.style.opacity = '0.5';
+                    formRow.style.pointerEvents = 'none';
+                    deleteBtn.disabled = true;
+                    deleteBtn.innerHTML = '<i class="bi bi-check"></i> Marqué pour suppression';
+                }
+            });
+        }
+        
+        // Gestion de l'image principale (un seul à la fois)
+        if (principaleCheckbox) {
+            principaleCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    // Décocher toutes les autres
+                    document.querySelectorAll('input[type="checkbox"][name$="-is_principale"]').forEach(cb => {
+                        if (cb !== this) {
+                            cb.checked = false;
+                        }
+                    });
+                }
+            });
+        }
+    }
+    
+    // Fonction pour mettre à jour les index après suppression
+    function updateFormIndexes() {
+        const visibleForms = imagesContainer.querySelectorAll('.image-form-row:not([style*="opacity"])');
+        totalFormsInput.value = visibleForms.length;
+    }
+    
+    // Initialiser les formulaires existants
+    document.querySelectorAll('.image-form-row').forEach(formRow => {
+        bindFormEvents(formRow);
+    });
+    
+    // Bouton "Ajouter une image"
+    if (addButton) {
+        addButton.addEventListener('click', addNewForm);
+    }
+})();
+</script>
+
 {% endblock %}

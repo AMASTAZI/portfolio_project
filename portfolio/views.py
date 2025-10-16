@@ -1,16 +1,17 @@
 # portfolio/views.py
+from django.forms import inlineformset_factory
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import Profil, Formation, Experience, Competence, Activite, Projet
-from .forms import ProfilForm, FormationForm, ExperienceForm, CompetenceForm, ActiviteForm,ProjetForm
+from .models import Profil, Formation, Experience, Competence, Activite, Projet, ProjetImage
+from .forms import ProfilForm, FormationForm, ExperienceForm, CompetenceForm, ActiviteForm,ProjetForm, ProjetImageForm
 
 
 def accueil(request):
     """Page publique du portfolio"""
     try:
-        profil = Profil.objects.first()
+        profil = Profil.objects.prefetch_related('projets', 'projets__images').first()
     except Profil.DoesNotExist:
         profil = None
     
@@ -47,21 +48,23 @@ def deconnexion_view(request):
     messages.success(request, 'Vous êtes déconnecté.')
     return redirect('portfolio:accueil')
 
-
+from django.views.decorators.http import require_http_methods
 @login_required
+@require_http_methods(["GET", "POST"])
 def modifier_profil(request):
-    """Page de modification du profil (espace privé)"""
-    profil, created = Profil.objects.get_or_create(user=request.user)
-    
+    """
+    Interface privée pour modifier le profil (affiche aussi les projets).
+    """
+    profil = get_object_or_404(Profil, user=request.user)
     if request.method == 'POST':
         form = ProfilForm(request.POST, request.FILES, instance=profil)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Profil mis à jour avec succès!')
+            messages.success(request, "Profil mis à jour.")
             return redirect('portfolio:modifier_profil')
     else:
         form = ProfilForm(instance=profil)
-    
+
     context = {
         'profil': profil,
         'form': form,
@@ -250,35 +253,44 @@ def supprimer_activite(request, pk):
 
 
 
+ProjetImageFormSet = inlineformset_factory(Projet, ProjetImage, form=ProjetImageForm,
+                                           fields=('image', 'description', 'is_principale', 'ordre'),
+                                           extra=3, can_delete=True)
+
 @login_required
 def ajouter_projet(request):
-    """Ajouter un projet"""
     profil = get_object_or_404(Profil, user=request.user)
     if request.method == 'POST':
         form = ProjetForm(request.POST, request.FILES)
-        if form.is_valid():
+        formset = ProjetImageFormSet(request.POST, request.FILES, prefix='images')
+        if form.is_valid() and formset.is_valid():
             projet = form.save(commit=False)
             projet.profil = profil
             projet.save()
+            formset.instance = projet
+            formset.save()
             messages.success(request, 'Projet ajouté avec succès !')
             return redirect('portfolio:modifier_profil')
     else:
         form = ProjetForm()
-    return render(request, 'portfolio/project_form.html', {'form': form, 'action': 'Ajouter'})
+        formset = ProjetImageFormSet(prefix='images')
+    return render(request, 'portfolio/project_form.html', {'form': form, 'formset': formset, 'action': 'Ajouter'})
 
 @login_required
 def modifier_projet(request, pk):
-    """Modifier un projet"""
     projet = get_object_or_404(Projet, pk=pk, profil__user=request.user)
     if request.method == 'POST':
         form = ProjetForm(request.POST, request.FILES, instance=projet)
-        if form.is_valid():
+        formset = ProjetImageFormSet(request.POST, request.FILES, instance=projet, prefix='images')
+        if form.is_valid() and formset.is_valid():
             form.save()
+            formset.save()
             messages.success(request, 'Projet modifié avec succès !')
             return redirect('portfolio:modifier_profil')
     else:
         form = ProjetForm(instance=projet)
-    return render(request, 'portfolio/project_form.html', {'form': form, 'action': 'Modifier'})
+        formset = ProjetImageFormSet(instance=projet, prefix='images')
+    return render(request, 'portfolio/project_form.html', {'form': form, 'formset': formset, 'action': 'Modifier'})
 
 @login_required
 def supprimer_projet(request, pk):

@@ -69,14 +69,15 @@ class Competence(models.Model):
         verbose_name_plural = 'Compétences'
         ordering = ['categorie', 'nom']
 
+# ...existing code...
 class Projet(models.Model):
     profil = models.ForeignKey(Profil, on_delete=models.CASCADE, related_name='projets')
     titre = models.CharField(max_length=200)
     description = models.TextField(blank=True)
-    image = models.ImageField(upload_to='img/', blank=True, null=True)
+    image_principale = models.ImageField(upload_to='projets/', blank=True, null=True)
     langages = models.CharField(max_length=200, blank=True, help_text='Liste de langages séparés par des virgules')
     ordre = models.IntegerField(default=0)
-    lien = models.URLField(blank=True, help_text='Lien vers le projet (ex: démo ou repo)')
+    lien = models.URLField(blank=True, null=True, help_text='Lien vers le projet (ex: démo ou repo)')
 
     def __str__(self):
         return self.titre
@@ -85,6 +86,30 @@ class Projet(models.Model):
         verbose_name = 'Projet'
         verbose_name_plural = 'Projets'
         ordering = ['-ordre', '-id']
+
+
+class ProjetImage(models.Model):
+    projet = models.ForeignKey(Projet, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField(upload_to='projets/images/')
+    description = models.CharField(max_length=255, blank=True)
+    is_principale = models.BooleanField(default=False)
+    ordre = models.IntegerField(default=0)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.is_principale:
+            ProjetImage.objects.filter(projet=self.projet).exclude(pk=self.pk).update(is_principale=False)
+            # synchroniser image_principale du Projet
+            if self.projet.image_principale != self.image:
+                self.projet.image_principale = self.image
+                self.projet.save(update_fields=['image_principale'])
+
+    def __str__(self):
+        return f"Image {self.pk} — {self.projet.titre}"
+
+    class Meta:
+        ordering = ['-is_principale', '-ordre', 'id']
+
 
 
 class Activite(models.Model):
