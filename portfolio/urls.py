@@ -33,4 +33,5 @@ urlpatterns = [
     path('projet/ajouter/', views.ajouter_projet, name='ajouter_projet'),
     path('projet/<int:pk>/modifier/', views.modifier_projet, name='modifier_projet'),
     path('projet/<int:pk>/supprimer/', views.supprimer_projet, name='supprimer_projet'),
+    path('projet-image/<int:pk>/supprimer-ajax/', views.supprimer_projet_image_ajax, name='supprimer_projet_image_ajax'),
 ]

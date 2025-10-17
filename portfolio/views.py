@@ -1,5 +1,6 @@
 # portfolio/views.py
 from django.forms import inlineformset_factory
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -299,4 +300,14 @@ def supprimer_projet(request, pk):
     projet.delete()
     messages.success(request, 'Projet supprimé.')
     return redirect('portfolio:modifier_profil')
-# ...existing code...
+
+from django.views.decorators.http import require_POST
+@login_required
+@require_POST
+def supprimer_projet_image_ajax(request, pk):
+    """
+    Supprime une ProjetImage via AJAX (utilisateur propriétaire requis).
+    """
+    img = get_object_or_404(ProjetImage, pk=pk, projet__profil__user=request.user)
+    img.delete()
+    return JsonResponse({'success': True})
