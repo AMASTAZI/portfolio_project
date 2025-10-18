@@ -5,13 +5,10 @@ import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', 'e-^eqv$@^-jjw45)qhq*zcbl#t&6v1^&uaz&+yra71+omny*7)')
+SECRET_KEY =  'e-^eqv$@^-jjw45)qhq*zcbl#t&6v1^&uaz&+yra71+omny*7)'
+DEBUG = False
+ALLOWED_HOSTS = 'amastazi-porfolio.onrender.com'.split(',')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
-
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 # Render.com ajoute automatiquement le domaine
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
@@ -62,13 +59,20 @@ WSGI_APPLICATION = 'portfolio_project.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-DATABASES = {
+"""DATABASES = {
     'default': dj_database_url.config(
         default=f'sqlite:///{BASE_DIR / "db.sqlite3"}',
         conn_max_age=600,
         conn_health_checks=True,
     )
-}
+}"""
+
+DATABASE_URL = 'postgresql://amastazi_user:QvFlBsZ2WPIZDsQgPbTxzUEdKMk044cd@dpg-d3pp3k0gjchc73apf3cg-a/amastazi'
+
+if DATABASE_URL:
+    DATABASES = {
+        'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {
