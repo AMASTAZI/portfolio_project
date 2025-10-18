@@ -5,7 +5,7 @@ from .models import Profil, Formation, Experience, Competence, Activite, Projet,
 class ProfilForm(forms.ModelForm):
     class Meta:
         model = Profil
-        fields = ['nom', 'prenom', 'pays', 'telephone', 'email', 'linkedin', 'github', 'objectif', 'photo']
+        fields = ['nom', 'prenom', 'pays', 'telephone', 'email', 'linkedin', 'github', 'objectif', 'photo', 'cv']  # <-- cv ajouté
         widgets = {
             'nom': forms.TextInput(attrs={'class': 'form-control'}),
             'prenom': forms.TextInput(attrs={'class': 'form-control'}),
@@ -16,6 +16,7 @@ class ProfilForm(forms.ModelForm):
             'github': forms.URLInput(attrs={'class': 'form-control', 'placeholder': 'ex: github.com/votre-nom'}),
             'objectif': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
             'photo': forms.FileInput(attrs={'class': 'form-control'}),
+            'cv': forms.FileInput(attrs={'class': 'form-control'}),  # <-- widget pour cv
         }
 
     def _normalize_url(self, value):

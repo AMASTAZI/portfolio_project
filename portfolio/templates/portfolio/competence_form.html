@@ -1,8 +1,102 @@
 {% extends 'portfolio/base.html' %}
 
-{% block title %}Gestion competence - Portfolio{% endblock %}
+{% block title %}{{ action }} une compétence - Portfolio{% endblock %}
 
 {% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h4 class="mb-0"><i class="bi bi-tools"></i> {{ action }} une compétence</h4>
+            </div>
+            <div class="card-body">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
 
-    
-{% endblock%}
+                <form method="post">
+                    {% csrf_token %}
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+                    {% endif %}
+                    <div class="mb-3">
+                        {{ form.nom.label_tag }}
+                        {{ form.nom }}
+                        {% if form.nom.errors %}
+                            <div class="invalid-feedback d-block">{{ form.nom.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.categorie.label_tag }}
+                        {{ form.categorie }}
+                        {% if form.categorie.errors %}
+                            <div class="invalid-feedback d-block">{{ form.categorie.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary me-auto">
+                            <i class="bi bi-save-fill"></i> Enregistrer
+                        </button>
+                        <a href="{% url 'portfolio:modifier_profil' %}" class="btn btn-secondary">
+                            <i class="bi bi-x-circle-fill"></i> Annuler
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Liste des compétences (si fournie) -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-list-ul"></i> Compétences</h5>
+            </div>
+            <div class="card-body">
+                {% if competences %}
+                    <ul class="list-group">
+                        {% for comp in competences %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>{{ comp.nom }}</strong>
+                                    {% if comp.categorie %}<div class="small text-muted">{{ comp.categorie }}</div>{% endif %}
+                                </div>
+                                <div class="table-actions">
+                                    <a href="{% url 'portfolio:modifier_competence' comp.pk %}" class="btn btn-sm btn-warning me-2">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </a>
+                                    <a href="{% url 'portfolio:supprimer_competence' comp.pk %}" class="btn btn-sm btn-danger" onclick="return confirm('Supprimer cette compétence ?');">
+                                        <i class="bi bi-trash-fill"></i>
+                                    </a>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% elif profil and profil.competences.all %}
+                    <ul class="list-group">
+                        {% for comp in profil.competences.all %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>{{ comp.nom }}</strong>
+                                    {% if comp.categorie %}<div class="small text-muted">{{ comp.categorie }}</div>{% endif %}
+                                </div>
+                                <div class="table-actions">
+                                    <a href="{% url 'portfolio:modifier_competence' comp.pk %}" class="btn btn-sm btn-warning me-2">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </a>
+                                    <a href="{% url 'portfolio:supprimer_competence' comp.pk %}" class="btn btn-sm btn-danger" onclick="return confirm('Supprimer cette compétence ?');">
+                                        <i class="bi bi-trash-fill"></i>
+                                    </a>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted">Aucune compétence ajoutée pour le moment.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

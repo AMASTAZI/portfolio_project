@@ -6,7 +6,7 @@
 {% block content %}
 {% if profil %}
     <!-- En-tête du profil -->
-    <div class="text-center mb-5">
+    <div class="text-center mb-3">
         {% if profil.photo %}
             <img src="{{ profil.photo.url }}" alt="{{ profil.prenom }} {{ profil.nom }}" class="profile-photo mb-3">
         {% else %}
@@ -15,7 +15,27 @@
             </div>
         {% endif %}
         <h1 class="display-4 fw-bold"> {{ profil.nom }} {{ profil.prenom }}</h1>
-        <p class="lead text-muted">{{ profil.pays }}</p>
+        <p class="lead text-muted mb-2">{{ profil.pays }}</p>
+
+        {# CV button nicely positioned under name, centered on small screens and right-aligned on larger ones #}
+        <div class="w-100 mt-2">
+            <div class="row justify-content-center align-items-center">
+                <div class="col-auto text-center">
+                    {% if profil.cv %}
+                        <a href="{{ profil.cv.url }}" class="btn btn-outline-primary" target="_blank" rel="noopener" download>
+                            <i class="bi bi-download"></i> Télécharger le CV
+                        </a>
+                    {% else %}
+                        <span class="badge bg-secondary">CV non fourni</span>
+                    {% endif %}
+                </div>
+                <div class="col-auto d-none d-md-block text-muted small">
+                    {% if profil.cv %}
+                       
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Informations de contact -->
@@ -23,6 +43,7 @@
         <div class="col-md-8 mx-auto">
             <div class="contact-info">
                 <div class="row">
+                    <h2 class="section-title" style="text-align:center;">Contact</h2>
                     <div class="col-md-6 mb-3">
                         <i class="bi bi-telephone-fill"></i>
                         <strong>Téléphone:</strong> {{ profil.telephone }}
@@ -31,6 +52,7 @@
                         <i class="bi bi-envelope-fill"></i>
                         <strong>Email:</strong> <a href="mailto:{{ profil.email }}" style="text-decoration:none;">{{ profil.email }}</a>
                     </div>
+
                     {% if profil.linkedin %}
                     <div class="col-md-6 mb-3">
                         <i class="bi bi-linkedin"></i>

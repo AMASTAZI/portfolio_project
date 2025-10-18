@@ -55,6 +55,17 @@
                             </div>
                         {% endif %}
                     </div>
+                    <div class="col-md-6 mb-3">
+                        {{ form.cv.label_tag }}
+                        {{ form.cv }}
+                        {% if profil.cv %}
+                            <div class="mt-2">
+                                <a href="{{ profil.cv.url }}" class="btn btn-sm btn-outline-primary" target="_blank" rel="noopener" download>
+                                    <i class="bi bi-download"></i> Télécharger le CV actuel
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
                     <div class="col-12 mb-3">
                         {{ form.objectif.label_tag }}
                         {{ form.objectif }}

@@ -13,6 +13,7 @@ class Profil(models.Model):
     github = models.URLField(blank=True, default='https://github.com/AMASTAZI')
     objectif = models.TextField(default='Passionné par le digital et l\'innovation, je souhaite mettre mes compétences au service de projets technologiques créatifs et impactants.')
     photo = models.ImageField(upload_to='profils/', blank=True, null=True)
+    cv = models.FileField(upload_to='cvs/', blank=True, null=True)
     
     def __str__(self):
         return f"{self.prenom} {self.nom}"
