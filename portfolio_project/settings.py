@@ -5,10 +5,14 @@ import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY =  'e-^eqv$@^-jjw45)qhq*zcbl#t&6v1^&uaz&+yra71+omny*7)'
-DEBUG = False
-ALLOWED_HOSTS = 'amastazi-porfolio.onrender.com'.split(',')
+# SECURITY: Utilisez les variables d'environnement en production
+SECRET_KEY = os.environ.get('SECRET_KEY', 'e-^eqv$@^-jjw45)qhq*zcbl#t&6v1^&uaz&+yra71+omny*7)')
 
+# DEBUG doit être False en production
+DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+
+# ALLOWED_HOSTS corrigé
+ALLOWED_HOSTS = ['amastazi-porfolio.onrender.com', 'localhost', '127.0.0.1']
 
 # Render.com ajoute automatiquement le domaine
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
@@ -27,7 +31,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # Pour servir les fichiers statiques
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -57,21 +61,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'portfolio_project.wsgi.application'
 
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-"""DATABASES = {
-    'default': dj_database_url.config(
-        default=f'sqlite:///{BASE_DIR / "db.sqlite3"}',
-        conn_max_age=600,
-        conn_health_checks=True,
-    )
-}"""
-
-DATABASE_URL = 'postgresql://amastazi_user:QvFlBsZ2WPIZDsQgPbTxzUEdKMk044cd@dpg-d3pp3k0gjchc73apf3cg-a/amastazi'
+# Database - Utiliser DATABASE_URL de l'environnement
+DATABASE_URL = os.environ.get('DATABASE_URL', 'postgresql://amastazi_user:QvFlBsZ2WPIZDsQgPbTxzUEdKMk044cd@dpg-d3pp3k0gjchc73apf3cg-a/amastazi')
 
 if DATABASE_URL:
     DATABASES = {
         'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -90,21 +92,16 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LANGUAGE_CODE = 'fr-fr'
-
 TIME_ZONE = 'Africa/Douala'
-
 USE_I18N = True
-
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
+# Static files
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-
-# WhiteNoise configuration pour une compression optimale
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Media files (uploads)
+# Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
@@ -114,7 +111,9 @@ LOGIN_URL = 'portfolio:connexion'
 LOGIN_REDIRECT_URL = 'portfolio:modifier_profil'
 LOGOUT_REDIRECT_URL = 'portfolio:accueil'
 
-# Security settings for production
+# Security settings
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 if not DEBUG:
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
@@ -122,3 +121,25 @@ if not DEBUG:
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = 'DENY'
+
+# Logging pour voir les erreurs en production
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}
