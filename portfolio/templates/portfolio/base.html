@@ -24,9 +24,9 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    <style>
-        
-    </style>
+    <!-- Dans votre base.html -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/devicon.min.css">
+   
     
     {% block extra_css %}{% endblock %}
 </head>
@@ -46,28 +46,41 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'portfolio:accueil' %}">
-                            <i class="bi bi-house-fill"></i> Accueil
+                        <a class="nav-link" href="{% url 'portfolio:accueil' %}#profil">
+                            <i class="bi bi-person-fill"></i> Profil
                         </a>
                     </li>
-                    {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'portfolio:modifier_profil' %}">
-                                <i class="bi bi-gear-fill"></i> Gérer mon profil
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'portfolio:deconnexion' %}">
-                                <i class="bi bi-box-arrow-right"></i> Déconnexion
-                            </a>
-                        </li>
-                    {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'portfolio:connexion' %}">
-                                <i class="bi bi-lock-fill"></i> Connexion
-                            </a>
-                        </li>
-                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'portfolio:accueil' %}#objectif">
+                            <i class="bi bi-bullseye"></i> Objectif professionnel
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'portfolio:accueil' %}#formation">
+                            <i class="bi bi-mortarboard-fill"></i> Formation
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'portfolio:accueil' %}#experiences">
+                            <i class="bi bi-briefcase-fill"></i> Expériences
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'portfolio:accueil' %}#competences">
+                            <i class="bi bi-tools"></i> Compétences
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'portfolio:accueil' %}#activites">
+                            <i class="bi bi-star-fill"></i> Activités
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'portfolio:accueil' %}#projets">
+                            <i class="bi bi-folder-fill"></i> Projets
+                        </a>
+                    </li>
+                    
 
                     <!-- Bouton de basculement de thème -->
                     <li class="nav-item ms-2">
@@ -77,6 +90,14 @@
                         </button>
                     </li>
                 </ul>
+                <form action="{% url 'set_language' %}" method="post" class="d-inline ms-2">
+                    {% csrf_token %}
+                    <input name="next" type="hidden" value="{{ request.get_full_path }}">
+                    <select name="language" onchange="this.form.submit()" class="form-select form-select-sm" aria-label="Choisir la langue">
+                        <option value="fr"{% if LANGUAGE_CODE == 'fr' %} selected{% endif %} data-flag="🇫🇷">Français</option>
+                        <option value="en"{% if LANGUAGE_CODE == 'en' %} selected{% endif %} data-flag="🇬🇧">English</option>
+                    </select>
+                </form>
             </div>
         </div>
     </nav>
