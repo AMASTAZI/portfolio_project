@@ -214,61 +214,53 @@
                 <h2 class="section-title"><i class="bi bi-tools"></i>Compétences</h2>
                 <div class="card">
                     <div class="card-body">
-                        {% for competence in profil.competences.all %}
-                            <span class="badge-custom badge-{{ competence.categorie|default:'default'|lower|cut:' ' }} d-inline-flex align-items-center">
-                                <i class="{{ competence.nom|get_tech_icon }} me-2"></i>
-                                {{ competence.nom }}
-                            </span>
-                        {% endfor %}
+                        <div class="competences-grid">
+                            {% for competence in profil.competences.all %}
+                                <div class="competence-item">
+                                    <i class="{{ competence.nom|get_tech_icon }}"></i>
+                                    <span>{{ competence.nom }}</span>
+                                </div>
+                            {% endfor %}
+                        </div>
                     </div>
                 </div>
             </div>
         {% endif %}
 
         <style>
-            .badge-custom {
-                display: inline-flex;
+            .competences-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 1rem;
+            }
+            
+            .competence-item {
+                display: flex;
+                flex-direction: column;
                 align-items: center;
-                padding: 0.5rem 1rem;
-                margin: 0.25rem;
-                color: white;
-                border-radius: 20px;
-                font-size: 0.9rem;
-                transition: transform 0.2s ease, box-shadow 0.2s ease;
-            }
-            
-            .badge-custom:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            }
-            
-            .badge-custom i {
-                font-size: 1.2rem;
-            }
-            
-            /* Couleurs par catégorie */
-            .badge-frontend {
+                justify-content: center;
+                padding: 1.5rem 1rem;
                 background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                border-radius: 12px;
+                color: white;
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+                cursor: default;
             }
             
-            .badge-backend {
-                background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            .competence-item:hover {
+                transform: translateY(-5px) scale(1.05);
+                box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
             }
             
-            .badge-database {
-                background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            .competence-item i {
+                font-size: 3rem;
+                margin-bottom: 0.5rem;
             }
             
-            .badge-devops {
-                background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-            }
-            
-            .badge-langage {
-                background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-            }
-            
-            .badge-default {
-                background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            .competence-item span {
+                font-weight: 600;
+                font-size: 0.9rem;
+                text-align: center;
             }
         </style>
 

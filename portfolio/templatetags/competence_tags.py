@@ -30,6 +30,7 @@ def get_tech_icon(nom):
         'nextjs': 'devicon-nextjs-plain colored',
         'nodejs': 'devicon-nodejs-plain colored',
         
+        
         # Bases de données
         'mysql': 'devicon-mysql-plain colored',
         'postgresql': 'devicon-postgresql-plain colored',
@@ -61,6 +62,10 @@ def get_tech_icon(nom):
         'ubuntu': 'devicon-ubuntu-plain colored',
         'nginx': 'devicon-nginx-original colored',
         'apache': 'devicon-apache-plain colored',
+        #analyse
+        'uml':'devicon-uml-plain colored',
+        'merise':'devicon-merise-plain colored',
+        
     }
     
     # Normaliser le nom (minuscules, sans espaces)
