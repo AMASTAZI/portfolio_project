@@ -9,3 +9,5 @@ media/
 .idea/
 .env
 *.log
+render.yaml
+env/
