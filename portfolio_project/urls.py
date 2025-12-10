@@ -7,6 +7,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('portfolio.urls')),
+    path('i18n/', include('django.conf.urls.i18n')),  # permet POST /i18n/setlang/
 ]
 
 if settings.DEBUG:

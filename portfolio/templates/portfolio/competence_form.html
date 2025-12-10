@@ -73,13 +73,18 @@
                             </li>
                         {% endfor %}
                     </ul>
+                {% load competence_tags %}
+
                 {% elif profil and profil.competences.all %}
                     <ul class="list-group">
                         {% for comp in profil.competences.all %}
                             <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <div>
-                                    <strong>{{ comp.nom }}</strong>
-                                    {% if comp.categorie %}<div class="small text-muted">{{ comp.categorie }}</div>{% endif %}
+                                <div class="d-flex align-items-center">
+                                    <i class="{{ comp.nom|get_tech_icon }} fs-3 me-3"></i>
+                                    <div>
+                                        <strong>{{ comp.nom }}</strong>
+                                        {% if comp.categorie %}<div class="small text-muted">{{ comp.categorie }}</div>{% endif %}
+                                    </div>
                                 </div>
                                 <div class="table-actions">
                                     <a href="{% url 'portfolio:modifier_competence' comp.pk %}" class="btn btn-sm btn-warning me-2">

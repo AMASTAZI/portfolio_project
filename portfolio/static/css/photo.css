@@ -1,0 +1,69 @@
+/* ...existing code... */
+
+/* Ensure photo and ring align exactly */
+.profile-photo-wrapper {
+  width: 140px;
+  height: 140px;
+  display: inline-block;
+  position: relative;
+}
+
+.profile-photo-wrapper .profile-photo {
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 50%;
+  display: block;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  border: 3px solid rgba(255,255,255,0.06);
+  background-color: #fff;
+}
+
+/* SVG ring sits exactly centered over the photo */
+.animated-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  pointer-events: none;
+  width: 140px;
+  height: 140px;
+}
+
+/* ring stroke animation (dash + rotate) */
+.animated-ring .ring {
+  stroke-dasharray: 302; /* circumference ~ 2πr (r=48) */
+  stroke-dashoffset: 302;
+  transform-origin: 55px 55px;
+  animation: ring-dash 1.8s ease-in-out infinite;
+}
+
+/* slow full rotation of the SVG */
+.animated-ring {
+  animation: ring-rotate 6s linear infinite;
+}
+
+/* keyframes */
+@keyframes ring-dash {
+  0%   { stroke-dashoffset: 302; stroke-opacity: 1; }
+  50%  { stroke-dashoffset: 80; stroke-opacity: 0.95; }
+  100% { stroke-dashoffset: 302; stroke-opacity: 1; }
+}
+@keyframes ring-rotate {
+  0%   { transform: translate(-50%, -50%) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .animated-ring,
+  .animated-ring .ring {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ...existing code... */

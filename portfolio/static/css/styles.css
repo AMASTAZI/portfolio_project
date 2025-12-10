@@ -299,6 +299,23 @@
             box-shadow: var(--shadow-md);
             margin-bottom: 1rem;
         }
+        /* je veux une animation bleu autour de la photo de profile*/
+        .profile-photo:hover {
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
 
         .contact-info {
             background: var(--card-bg);
