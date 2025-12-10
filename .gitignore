@@ -11,3 +11,4 @@ media/
 *.log
 render.yaml
 env/
+build.sh
